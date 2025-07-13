@@ -24,9 +24,8 @@ This script solves these issues by automating the creation of a type-safe class 
 
 ## Usage
 1. Place resources (e.g., textures, fonts) in the `Resources` folder.
-2. Call `ResourcesHelper.GenerateCode()` via the Unity menu or configure for automatic execution.
-3. The generated `ResourcesData.cs` file will appear in `_App/Scripts/Data`.
-4. Use the `ResourcesData` class to access resources, e.g., `ResourcesData.Test_0.Data.Visual.Circle`.
+2. The generated `ResourcesData.cs` file will appear in `_App/Scripts/Data`.
+3. Use the `ResourcesData` class to access resources, e.g., `ResourcesData.Test_0.Data.Visual.Circle`.
 
 ## Notes
 - Only resource types compatible with `Resources.Load` are supported.
@@ -60,9 +59,8 @@ This script solves these issues by automating the creation of a type-safe class 
 
 ## Использование
 1. Поместите ресурсы (например, текстуры, шрифты) в папку `Resources`.
-2. Вызовите `ResourcesHelper.GenerateCode()` через меню Unity или настройте автоматический запуск.
-3. Сгенерированный файл `ResourcesData.cs` появится в `_App/Scripts/Data`.
-4. Используйте класс `ResourcesData` для доступа к ресурсам, например: `ResourcesData.Test_0.Data.Visual.Circle`.
+2. Сгенерированный файл `ResourcesData.cs` появится в `_App/Scripts/Data`.
+3. Используйте класс `ResourcesData` для доступа к ресурсам, например: `ResourcesData.Test_0.Data.Visual.Circle`.
 
 ## Примечания
 - Поддерживаются только типы ресурсов, совместимые с `Resources.Load`.
