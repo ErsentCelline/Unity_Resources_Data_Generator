@@ -7,21 +7,35 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-public static class ResourcesDataGenerator
+public class ResourcesDataGenerator : AssetPostprocessor
 {
     private static string Root => Path.Combine(Application.dataPath + "/Resources");
-    private static string DestinationPath => Path.Combine(Application.dataPath + "/_App/Scripts/Data"); // Can be modify
-    
+    private static string DestinationPath => Path.Combine(Application.dataPath + "/_App/Scripts/Data");
+
+    private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets,
+        string[] movedFromAssetPaths)
+    {
+        if (IsGenerateCodeRequired(importedAssets) || 
+            IsGenerateCodeRequired(deletedAssets) ||
+            IsGenerateCodeRequired(movedAssets))
+            GenerateCode();
+    }
+
+    private static bool IsGenerateCodeRequired(string[] assets)
+    {
+        return assets.Length != 0 && assets[0].StartsWith("Assets/Resources/");
+    }
+
     public static void GenerateCode()
     {
-        CheckDirectoryExists(DestinationPath); // Ensure destination exists, create if not.
+        CheckDirectoryExists(DestinationPath);
 
-        var data = new DirectoryData // Initialize root structure with script name
+        var data = new DirectoryData
         {
-            Name = "ResourcesData" 
+            Name = "ResourcesData"
         };
 
-        ProcessDirectory(Root, ref data); // Create tree of structures
+        ProcessDirectory(Root, ref data);
 
         var sb = new StringBuilder();
         sb.AppendLine(data.ToString());
@@ -46,8 +60,7 @@ public static class ResourcesDataGenerator
         for (int i = 0; i < directoryData.Directories.Length; i++) 
             ProcessDirectory(Path.Combine(directoryPath, directoryData.Directories[i].Name), ref directoryData.Directories[i]);
     }
-
-    // Add all directories on path
+    
     private static void WriteDirectories(string root, ref DirectoryData directoryData)
     {
         string[] directories = Directory.GetDirectories(root);
@@ -61,7 +74,6 @@ public static class ResourcesDataGenerator
             };
     }
 
-    // Add all files on path
     private static void WriteFiles(string root, ref DirectoryData directoryData)
     {
         string[] filePaths = Directory.GetFiles(root).Where(file => !file.EndsWith(".meta")).ToArray();
@@ -71,9 +83,8 @@ public static class ResourcesDataGenerator
         foreach (string filePath in filePaths)
             directoryData.NameToPath.Add(GeneratePropertyName(Path.GetFileNameWithoutExtension(filePath)), filePath);
     }
-
-    // Generate and return valid property name
-    private static string GeneratePropertyName(string filePath)
+    
+    public static string GeneratePropertyName(string filePath)
     {
         string fileName = Regex.Replace(
             filePath,
@@ -117,7 +128,7 @@ public static class ResourcesDataGenerator
             string tab = new('\t', tabCount);
             string innerTab = new('\t', tabCount + 1);
             
-            sb.AppendLine($"\n{tab}public class {Name}\n{tab}{{");
+            sb.AppendLine($"\n{tab}public class {ResourcesDataGenerator.GeneratePropertyName(Name)}\n{tab}{{");
 
             foreach (var directory in Directories)
                 sb.AppendLine(directory.ToString(tabCount + 1));
